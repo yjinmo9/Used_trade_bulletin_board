@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum PostStatus {
+  판매중
+  예약중
+  거래완료
+  대기중
+}
+
+enum ReportType {
+  노쇼
+  허위게시물
+  거래대금미지급
+  환불대금미지급
+}
+
+model Member {
+  id             String    @id @default(cuid())
+  name           String
+  password       String
+  trustScore     Int
+  status         String    @db.VarChar(20) // 예: 예약 제한, 계정 정지 등
+  createdAt      DateTime  @default(now())
+
+  posts          Post[]
+  reservations   Reservation[] @relation("BuyerReservations")
+  reviewsWritten Review[]      @relation("WrittenReviews")
+  reviewsTargeted Review[]     @relation("TargetedReviews")
+  reportsFiled   Report[]      @relation("FiledReports")
+  reportsReceived Report[]     @relation("ReceivedReports")
+}
+
+model Post {
+  id         String     @id @default(cuid())
+  title      String
+  content    String
+  price      Int
+  createdAt  DateTime   @default(now())
+  status     PostStatus @default(대기중)
+
+  author     Member     @relation(fields: [authorId], references: [id])
+  authorId   String
+
+  reservations Reservation[]
+  reviews     Review[]
+}
+
+model Reservation {
+  id         String    @id @default(cuid())
+  datetime   DateTime
+  location   String
+  status     String    @default("대기중")
+
+  post       Post      @relation(fields: [postId], references: [id])
+  postId     String
+
+  buyer      Member    @relation("BuyerReservations", fields: [buyerId], references: [id])
+  buyerId    String
+}
+
+model Review {
+  id         String    @id @default(cuid())
+  rating     Float
+  content    String
+  createdAt  DateTime  @default(now())
+
+  writer     Member    @relation("WrittenReviews", fields: [writerId], references: [id])
+  writerId   String
+
+  target     Member    @relation("TargetedReviews", fields: [targetId], references: [id])
+  targetId   String
+
+  post       Post      @relation(fields: [postId], references: [id])
+  postId     String
+}
+
+model Report {
+  id         String      @id @default(cuid())
+  type       ReportType
+  description String
+  createdAt  DateTime    @default(now())
+
+  reporter   Member      @relation("FiledReports", fields: [reporterId], references: [id])
+  reporterId String
+
+  reported   Member      @relation("ReceivedReports", fields: [reportedId], references: [id])
+  reportedId String
+}
