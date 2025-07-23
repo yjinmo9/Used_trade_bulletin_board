@@ -28,14 +28,7 @@ Next.js를 프론트엔드와 API 서버에 활용하고, MySQL을 데이터베�
 - 기타: Node.js, JavaScript, EWMA 알고리즘
 
 ---
-
-## 프로젝트 기간 및 역할  
-- 기간: 2024.00 ~ 2024.00  
-- 팀원: 총 6명  
-- 본인 역할: 총무, 리서치, 신뢰도 산정 로직 설계 및 일부 프론트엔드 API 구현 참여
-
---- 
-
+ 
 
 
 <img width="663" alt="스크린샷 2025-07-05 오후 1 22 08" src="https://github.com/user-attachments/assets/303f7373-cd40-4f87-938d-f072f9e7407d" />
